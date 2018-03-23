@@ -4,6 +4,7 @@ from pandas import Series, DataFrame
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 
+from matplotlib import pyplot as plt
 
 #Importing Data from the Slump_Test Data File
 df=pd.read_csv("../Data/slump_test.data")
@@ -21,18 +22,12 @@ for i in range(0,10):
         
     #Creating Training and Testing Set (85 Training Set and 18 Testing Set)
     xTrain, xTest, yTrain, yTest=train_test_split(x,y,test_size=18)
-    
-    
-    #Setting up Testing Data
-    #xTest=df.loc[85:102,['Cement','Slag','Fly ash','Water','SP','Coarse Aggr.','Fine Aggr.']]
-    #yTest=df.loc[85:102,['FLOW(cm)']]
-    
-    
+        
     #Creating Linear Regression Model
     lreg=LinearRegression()
     
     #Training the Model
-    lreg.fit(xTrain,yTrain)
+    cvfit=lreg.fit(xTrain,yTrain)
     
     #Predicting on the testing data
     yPred = lreg.predict(xTest)
@@ -40,7 +35,7 @@ for i in range(0,10):
     #Calculating Coefficients/Weights
     #coeff = DataFrame(xTrain.columns)
     #coeff['Coefficient Estimate'] = Series(lreg.coef_)
-    
+
     #Calculating the Mean Squared Error
     mse = np.mean((yPred - yTest)**2)
     
@@ -53,5 +48,7 @@ for i in range(0,10):
         mse_list=np.append(mse_list,[mse])
         
                 
-mean_mse=np.mean(mse_list)            
+mean_mse=np.mean(mse_list)
+
+
 
