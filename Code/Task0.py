@@ -30,6 +30,7 @@ mean_rsqd=0
 list_mse=[]
 list_rsqd=[]
 list_ypred=[]
+list_model_unreq=[]
 
 
 mean_mse_ridge=0
@@ -37,6 +38,7 @@ mean_rsqd_ridge=0
 list_mse_ridge=[]
 list_rsqd_ridge=[]
 list_ypred_ridge=[]
+list_model_ridge=[]
 
 
 mean_mse_lasso=0
@@ -44,6 +46,7 @@ mean_rsqd_lasso=0
 list_mse_lasso=[]
 list_rsqd_lasso=[]
 list_ypred_lasso=[]
+list_model_lasso=[]
 
 
 
@@ -63,6 +66,7 @@ for i in range(0,10):
     min_mse_lasso=9999
     best_fit_lasso=None
         
+    #Performing k fold cross vlaidation
     for train_indices, test_indices in kf.split(Train):
         train_data = np.array(Train)[train_indices]
         test_data = np.array(Train)[test_indices]
@@ -134,6 +138,7 @@ for i in range(0,10):
     list_mse.append(mse_new.values[0])
     list_rsqd.append(rSqd_new)
     list_ypred.append(y_Pred)
+    list_model_unreq.append(best_fit)
 
     
     #Predicting Y from the Ridge Model created from K-Fold and storing mse in a list
@@ -143,6 +148,7 @@ for i in range(0,10):
     list_mse_ridge.append(mse_new_ridge.values[0])
     list_rsqd_ridge.append(rSqd_new_ridge)
     list_ypred_ridge.append(y_Pred_ridge)
+    list_model_ridge.append(best_fit_ridge)
 
     
     #Predicting Y from the Lasso Model created from K-Fold and storing mse in a list    
@@ -153,6 +159,7 @@ for i in range(0,10):
     list_mse_lasso.append(mse_new_lasso)
     list_rsqd_lasso.append(rSqd_new_lasso)
     list_ypred_lasso.append(y_Pred_lasso)
+    list_model_lasso.append(best_fit_lasso)
 
     
 
@@ -167,19 +174,29 @@ mean_rsqd_ridge=sum(list_rsqd_ridge)/float(len(list_rsqd_ridge))
 mean_rsqd_lasso=sum(list_rsqd_lasso)/float(len(list_rsqd_lasso))
     
              
-#Choosing Best Y prediction corresponding to least MSE for Linear 
+#Choosing Best Y prediction(one which has least MSE) for unreg 
 index_1=list_mse.index(min(list_mse))
 best_ypred=list_ypred[index_1]
 
-#Choosing Best Y Prediction corresponding to least MSE for Ridge
+#Choosing Best Y Prediction(one which has least MSE) for Ridge
 index_2=list_mse_ridge.index(min(list_mse_ridge))
 best_ypred_ridge=list_ypred_ridge[index_2]
 
 
-#Choosing Best Y prediction corresponding to least MSE for Lasso
+#Choosing Best Y prediction(one which has least MSE) for Lasso
 index_3=list_mse_lasso.index(min(list_mse_lasso))
 best_ypred_lasso=list_ypred_lasso[index_3]
 
+#Choosing Best Model for unreg , ridge and lasso (one which has last MSE)
+best_model_unreg=list_model_unreq[index_1]
+best_model_ridge=list_model_ridge[index_2]
+best_model_lasso=list_model_lasso[index_3]
+
+
+#Storing coefficients of Best Model of unreg, ridge and lasso
+coef_unreg=best_model_unreg.coef_
+coef_ridge=best_model_ridge.coef_
+coef_lasso=best_model_lasso.coef_
 
 #Drawing plot between Y Predicticed vs Y Test for MLE, Ridge and Lasso
 plt.scatter(y_Test.values.tolist(), best_ypred, marker='v', label='MLE')
