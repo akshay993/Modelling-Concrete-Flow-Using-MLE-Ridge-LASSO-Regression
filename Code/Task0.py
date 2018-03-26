@@ -31,17 +31,20 @@ list_mse=[]
 list_rsqd=[]
 list_ypred=[]
 
+
 mean_mse_ridge=0
 mean_rsqd_ridge=0
 list_mse_ridge=[]
 list_rsqd_ridge=[]
 list_ypred_ridge=[]
 
+
 mean_mse_lasso=0
 mean_rsqd_lasso=0
 list_mse_lasso=[]
 list_rsqd_lasso=[]
 list_ypred_lasso=[]
+
 
 
 
@@ -131,6 +134,7 @@ for i in range(0,10):
     list_mse.append(mse_new.values[0])
     list_rsqd.append(rSqd_new)
     list_ypred.append(y_Pred)
+
     
     #Predicting Y from the Ridge Model created from K-Fold and storing mse in a list
     y_Pred_ridge=best_fit_ridge.predict(x_Test)
@@ -139,6 +143,7 @@ for i in range(0,10):
     list_mse_ridge.append(mse_new_ridge.values[0])
     list_rsqd_ridge.append(rSqd_new_ridge)
     list_ypred_ridge.append(y_Pred_ridge)
+
     
     #Predicting Y from the Lasso Model created from K-Fold and storing mse in a list    
     y_Pred_lasso=best_fit_lasso.predict(x_Test)
@@ -148,6 +153,7 @@ for i in range(0,10):
     list_mse_lasso.append(mse_new_lasso)
     list_rsqd_lasso.append(rSqd_new_lasso)
     list_ypred_lasso.append(y_Pred_lasso)
+
     
 
 #Mean value of MSE for MLE, Ridge and Lasso    
@@ -176,13 +182,14 @@ best_ypred_lasso=list_ypred_lasso[index_3]
 
 
 #Drawing plot between Y Predicticed vs Y Test for MLE, Ridge and Lasso
-plt.scatter(y_Test, best_ypred, marker='v', label='MLE')
-plt.scatter(y_Test,best_ypred_ridge, marker='x', label='Ridge')
-plt.scatter(y_Test,best_ypred_lasso, marker='s', label='Lasso')
-#plt.xticks(np.arange(0,90,step=10))
+plt.scatter(y_Test.values.tolist(), best_ypred, marker='v', label='MLE')
+plt.scatter(y_Test.values.tolist(),best_ypred_ridge, marker='x', label='Ridge')
+plt.scatter(y_Test.values.tolist(),best_ypred_lasso, marker='s', label='Lasso')
+plt.xticks(np.arange(10,90,step=10))
 plt.xlabel("Y Test Values")
 plt.ylabel("Y Predicted")
 plt.legend()
+
 
 
         
