@@ -1,33 +1,19 @@
 import numpy as np
-import pandas as pd
-from pandas import Series, DataFrame
 from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-
-from matplotlib import pyplot as plt
-
-#Importing Data from the Slump_Test Data File
-df=pd.read_csv("../Data/slump_test.data")
-
-#Removing the 'No' column from the data frame
-df=df.drop('No',1)
-
-#Setting Up Exploratory Variables (x) and Response Variable (y)
-x=df.loc[:,['Cement','Slag','Fly ash','Water','SP','Coarse Aggr.','Fine Aggr.']]
-y=df.loc[:,['FLOW(cm)']]
+from sklearn.linear_model import Ridge
+from sklearn.linear_model import Lasso
 
 
-
-for i in range(0,10):
+def linearregressionfunction(xTrain,xTest,yTrain,yTest):
         
     #Creating Training and Testing Set (85 Training Set and 18 Testing Set)
-    xTrain, xTest, yTrain, yTest=train_test_split(x,y,test_size=18)
+    #xTrain, xTest, yTrain, yTest=train_test_split(x,y,test_size=18)
         
     #Creating Linear Regression Model
     lreg=LinearRegression()
     
     #Training the Model
-    cvfit=lreg.fit(xTrain,yTrain)
+    lreg.fit(xTrain,yTrain)
     
     #Predicting on the testing data
     yPred = lreg.predict(xTest)
@@ -41,14 +27,74 @@ for i in range(0,10):
     
     #Calculating R-Squared
     rSqd=lreg.score(xTest,yTest)
+        
+    lobj=np.append(mse,rSqd)
+    lobj=np.append(lobj,lreg)
     
-    if i==0:
-        mse_list=mse
-    else:
-        mse_list=np.append(mse_list,[mse])
+    return lobj
+
+
+def ridgeregressionfunction(xTrain,xTest,yTrain,yTest):
+    
+    #Creating Ridge Regression model
+    ridgeReg = Ridge(alpha=1)
+    
+    #Training the Model
+    ridgeReg.fit(xTrain, yTrain)
+    
+    #Predicting on the Testing set
+    yPred = ridgeReg.predict(xTest)
+    
+    #Calculating Mean Squared Error
+    mse = np.mean((yPred - yTest)**2)
+    
+    #Calculating R-Squared
+    rSqd=ridgeReg.score(xTest,yTest) 
+    
+    robj=np.append(mse,rSqd)
+    
+    return robj
+
+
+def lassoregressionfunction(xTrain,xTest,yTrain,yTest):
+    
+    #Creating Lasso Regression model
+    lassoReg = Lasso(alpha=1)
+    
+    #Training the Model
+    lassoReg.fit(xTrain,yTrain)
+    
+    #Predicting on the Testing set
+    yPred = lassoReg.predict(xTest)
+    
+    yTest1=yTest["FLOW(cm)"]
+    
+    #Calculating Mean Squared Error
+    mse = np.mean((yPred - yTest1)**2)
+    
+    #Calculating R-Squared
+    rSqrd=lassoReg.score(xTest,yTest)
+
+    lassobj=np.append(mse,rSqrd)
+    
+    return lassobj
+
+
+
+
+
+
+ 
+    
+
+
+
+
+
+    
         
                 
-mean_mse=np.mean(mse_list)
+
 
 
 

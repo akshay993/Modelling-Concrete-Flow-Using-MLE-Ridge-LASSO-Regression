@@ -10,7 +10,6 @@ from sklearn.model_selection import KFold
 from matplotlib import pyplot as plt
 
 
-
 #Importing Data from the Slump_Test Data File
 df=pd.read_csv("../Data/slump_test.data")
 
@@ -20,11 +19,8 @@ df=df.drop('No',1)
 #Data containing the 8 parameters (7 features and 1 response)
 data=df.loc[:,['Cement','Slag','Fly ash','Water','SP','Coarse Aggr.','Fine Aggr.','FLOW(cm)']]
 
-lin_array=[]#np.empty
-ridge_array=[]#np.empty
-lasso_array=[]#np.empty
 
-
+#Declaring variable/list which will be used in the code
 mean_mse=0
 mean_rsqd=0
 list_mse=[]
@@ -49,8 +45,7 @@ list_ypred_lasso=[]
 list_model_lasso=[]
 
 
-
-
+#Running 10 iterations  
 for i in range(0,10):
     
     #Creating training and test data   
@@ -82,7 +77,7 @@ for i in range(0,10):
         yTest=testdata.loc[:,['FLOW(cm)']]
             
         
-        #Linear Regression 
+        #Unregularized Regression 
         lreg=LinearRegression() 
         lreg.fit(xTrain,yTrain)
         yPred = lreg.predict(xTest)
@@ -90,7 +85,7 @@ for i in range(0,10):
         rSqd=lreg.score(xTest,yTest)
         
        
-         
+        #Storing minimum mse value and corresponding model 
         if mse.values[0]<min_mse:
             min_mse=mse.values[0]
             best_fit=lreg
@@ -105,6 +100,7 @@ for i in range(0,10):
         mse_ridge = np.mean((yPred_ridge - yTest)**2)
         rSqd_ridge=ridgeReg.score(xTest,yTest) 
         
+        #Storing minimum mse value and corresponding model
         if mse_ridge.values[0]<min_mse_ridge:
             min_mse_ridge=mse_ridge.values[0]
             best_fit_ridge=ridgeReg
@@ -120,6 +116,7 @@ for i in range(0,10):
         mse_lasso = np.mean((yPred_lasso - yTest1)**2)
         rSqrd_lasso=lassoReg.score(xTest,yTest)
         
+        #Storing minimum mse value and corresponding model
         if mse_lasso<min_mse_lasso:
             min_mse_lasso=mse_lasso
             best_fit_lasso=lassoReg
@@ -131,7 +128,7 @@ for i in range(0,10):
     x_Test=Test.loc[:,['Cement','Slag','Fly ash','Water','SP','Coarse Aggr.','Fine Aggr.']]
     y_Test=Test.loc[:,['FLOW(cm)']]
     
-    #Predicting Y from the Linear Model created from K-Fold and storing mse in a list
+    #Predicting Y from the Linear Model created from 5-Fold and storing mse, rSqrd, yPred and model in lists
     y_Pred=best_fit.predict(x_Test)
     mse_new=np.mean((y_Pred - y_Test)**2)
     rSqd_new=best_fit.score(x_Test,y_Test)    
@@ -141,7 +138,7 @@ for i in range(0,10):
     list_model_unreq.append(best_fit)
 
     
-    #Predicting Y from the Ridge Model created from K-Fold and storing mse in a list
+    #Predicting Y from the Ridge Model created from 5-Fold and storing mse, rSqrd, yPred and model in lists
     y_Pred_ridge=best_fit_ridge.predict(x_Test)
     mse_new_ridge=np.mean((y_Pred_ridge - y_Test)**2)
     rSqd_new_ridge=best_fit_ridge.score(x_Test,y_Test)
@@ -151,7 +148,7 @@ for i in range(0,10):
     list_model_ridge.append(best_fit_ridge)
 
     
-    #Predicting Y from the Lasso Model created from K-Fold and storing mse in a list    
+    #Predicting Y from the Lasso Model created from 5-Fold and storing mse, rSqrd, yPred and model in lists    
     y_Pred_lasso=best_fit_lasso.predict(x_Test)
     y_Test1=y_Test["FLOW(cm)"]
     mse_new_lasso=np.mean((y_Pred_lasso - y_Test1)**2)
@@ -199,11 +196,11 @@ coef_ridge=best_model_ridge.coef_
 coef_lasso=best_model_lasso.coef_
 
 #Drawing plot between Y Predicticed vs Y Test for MLE, Ridge and Lasso
-plt.scatter(y_Test.values.tolist(), best_ypred, marker='v', label='MLE')
+plt.scatter(y_Test.values.tolist(), best_ypred, marker='v', label='Unregularized')
 plt.scatter(y_Test.values.tolist(),best_ypred_ridge, marker='x', label='Ridge')
 plt.scatter(y_Test.values.tolist(),best_ypred_lasso, marker='s', label='Lasso')
 plt.xticks(np.arange(10,90,step=10))
-plt.xlabel("Y Test Values")
+plt.xlabel("Y Test")
 plt.ylabel("Y Predicted")
 plt.legend()
 
